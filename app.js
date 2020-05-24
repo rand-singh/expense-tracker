@@ -8,12 +8,41 @@ const balance = document.getElementById("balance"),
 
 const dummyTransactions = [
   { id: 1, text: "income", amount: 500 },
-  { id: 2, text: "flower", amount: -10 },
-  { id: 3, text: "book", amount: 50 },
   { id: 4, text: "shorts", amount: -20 },
 ];
 
 let transactions = dummyTransactions;
+
+/**
+ *
+ * @param {object} e The event object
+ */
+function addTransaction(e) {
+  e.preventDefault();
+
+  if (text.value.trim() === "" || amount.value.trim() === "") {
+    console.error("bug");
+  } else {
+    const transaction = {
+      id: generateID(),
+      text: text.value,
+      amount: +amount.value,
+    };
+
+    transactions.push(transaction);
+
+    addTransactionsDOM(transaction);
+
+    updateValues();
+
+    text.value = "";
+    amount.value = "";
+  }
+}
+
+function generateID() {
+  return Math.floor(Math.random() * 100000000);
+}
 
 function addTransactionsDOM(transaction) {
   // get sign
@@ -24,7 +53,9 @@ function addTransactionsDOM(transaction) {
 
   item.innerHTML = `
     ${transaction.text} <span>${sign} ${Math.abs(transaction.amount)}</span>
-    <button class="delete-btn">X</button>
+    <button class="delete-btn" onclick="removeTransaction(${
+      transaction.id
+    })">X</button>
   `;
 
   list.appendChild(item);
@@ -51,6 +82,12 @@ function updateValues() {
   money_minus.innerText = `£${expense}`;
 }
 
+function removeTransaction(id) {
+  transactions = transactions.filter(transaction => transaction.id !== id);
+
+  init();
+}
+
 // Init app
 function init() {
   list.innerHTML = "";
@@ -59,3 +96,6 @@ function init() {
 }
 
 init();
+
+// event listensers
+form.addEventListener("submit", addTransaction);
